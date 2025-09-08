@@ -3,3 +3,6 @@ media/
 
 **/__pycashe__/
 *.pyc
+
+db.splite3
+local_settings.py

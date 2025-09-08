@@ -18,6 +18,9 @@ class Category(models.Model):
         verbose_name = _('Category')
         verbose_name_plural = _('Categories')
 
+    def __str__(self):
+        return self.title
+
 
 class Product(models.Model):
     title = models.CharField(_('title'), max_length=50)
@@ -25,8 +28,8 @@ class Product(models.Model):
     avatar = models.ImageField(
         _('avatar'), blank=True, upload_to='upload/product/')
     is_enable = models.BooleanField(_('enable'), default=True)
-    Categories = models.ManyToManyField(
-        Category, verbose_name=_('Categories'), blank=True)
+    categories = models.ManyToManyField(
+        Category, verbose_name=_('categories'), blank=True)
     created_time = models.DateTimeField(_('created time'), auto_now_add=True)
     updated_time = models.DateTimeField(_('updated time'), auto_now=True)
 
@@ -35,15 +38,28 @@ class Product(models.Model):
         verbose_name = _('Product')
         verbose_name_plural = _('Products')
 
+    def __str__(self):
+        return self.title
+
 
 class File(models.Model):
-    product = models.ForeignKey(Product, verbose_name=_(
+    FILE_AUDIO = 1
+    FILE_VIDEO = 2
+    FILE_PDF = 3
+    FILE_TYPES = {
+        (FILE_AUDIO, _('Audio')),
+        (FILE_VIDEO, _('Video')),
+        (FILE_PDF, _('PDF')),
+    }
+    product = models.ForeignKey(Product, related_name='files', verbose_name=_(
         'product'), on_delete=models.CASCADE)
     title = models.CharField(_('title'), max_length=50)
+    file_type = models.PositiveSmallIntegerField(
+        _('file type'), choices=FILE_TYPES, default=2)
     file = models.FileField(_('file'), upload_to='upload/file/')
     description = models.CharField(_('description'), blank=True)
     avatar = models.ImageField(
-        _('avatar'), blank=True, upload_to='upload/files/%Y/%m/%d/')
+        _('avatar'), blank=True, upload_to='upload/file/')
     is_enable = models.BooleanField(_('enable'), default=True)
     created_time = models.DateTimeField(_('created time'), auto_now_add=True)
     updated_time = models.DateTimeField(_('updated time'), auto_now=True)
@@ -52,3 +68,6 @@ class File(models.Model):
         db_table = 'files'
         verbose_name = _('File')
         verbose_name_plural = _('Files')
+
+    def __str__(self):
+        return self.title
